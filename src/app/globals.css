@@ -1,26 +1,74 @@
 @import "tailwindcss";
 
+/* 🌤️ Light Mode — Clean, Modern Slate & Teal */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc; /* Very light slate */
+  --foreground: #0f172a; /* Deep slate for text */
+  --primary: #143784;    /* Teal accent */
+  --secondary: #b4005d;  /* Muted slate gray */
+  --border: #e2e8f0;     /* Light border */
+  --card-bg: #746b6b;    /* Card background */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-border: var(--border);
+  --color-card: var(--card-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 🌙 Dark Mode — Sleek, Professional Feel */
+
+
+/* 🧭 Base Styles */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.7;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 🪄 Links and Buttons */
+a,
+button {
+  color: var(--primary);
+  transition: all 0.25s ease-in-out;
 }
+a:hover,
+button:hover {
+  opacity: 0.85;
+}
+
+/* ✨ Dashboard Cards */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* @media (prefers-color-scheme: dark) {
+  .card {
+    background-color: var(--card-bg);
+    border-color: var(--border);
+    box-shadow: 0 2px 6px rgba(255, 255, 255, 0.03);
+  }
+  .card:hover {
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+  }
+} 
+  
+
+
+
+*/
