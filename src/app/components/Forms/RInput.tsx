@@ -27,7 +27,7 @@ const RInput = ({
           {label && (
             <label
               htmlFor={name}
-              className="mb-1 text-sm text-left text-gray-700"
+              className="mb-1 text-sm text-left text-gray-800"
             >
               {label}
             </label>

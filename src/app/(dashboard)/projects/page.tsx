@@ -4,31 +4,37 @@ import { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
-import ProjectTable from "@/app/(dashboard)/projects/ProjectTable";
-import ProjectFormModal from "@/app/(dashboard)/projects/ProjectFormModal";
+// CHANGE 1: Import the TProject interface and your components
+import { TProject } from "@/types"; // Adjust path if needed
+import ProjectFormModal from "./ProjectFormModal";
+import ProjectTable from "./ProjectTable";
 
-// --- DUMMY DATA ---
-// In a real application, this would be fetched from your server API.
-const dummyProjects = [
+// CHANGE 2: Update the dummy data to match the TProject interface
+const dummyProjects: TProject[] = [
   {
     id: "proj_001",
     title: "Personal Portfolio v2",
-    description:
-      "A complete redesign of my personal portfolio, built with Next.js for server-side rendering and static generation. Features a sleek, modern design with Tailwind CSS and Framer Motion for animations.",
-    imageUrl:
+    description: "A complete redesign of my personal portfolio...",
+    // Renamed imageUrl to image
+    image:
       "https://media.geeksforgeeks.org/wp-content/uploads/20240909102345/Web-Design-Projects-1.webp",
     technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
     liveUrl: "https://your-portfolio-url.com",
+    category: "Frontend",
+    gallery: [],
+    status: "Completed",
     githubClient: "https://github.com/your-username/portfolio-v2",
     githubServer: "https://github.com/your-username/portfolio-v2",
     createdAt: "2025-09-15T10:00:00Z",
+    // Added updatedAt
+    updatedAt: "2025-09-15T10:00:00Z",
   },
   {
     id: "proj_002",
     title: 'E-commerce Platform "ShopSphere"',
-    description:
-      "A full-featured e-commerce site with product listings, a shopping cart, user authentication, and a Stripe-integrated checkout process. The backend is powered by Node.js and Express.",
-    imageUrl:
+    description: "A full-featured e-commerce site...",
+    // Renamed imageUrl to image
+    image:
       "https://cdn.dribbble.com/userupload/32875394/file/original-d33f51858dc31debef5cb6bca897daa0.png?format=webp&resize=400x300&vertical=center",
     technologies: [
       "React",
@@ -38,40 +44,52 @@ const dummyProjects = [
       "MongoDB",
       "Stripe API",
     ],
+    category: "Full Stack",
+    status: "Completed",
     liveUrl: "#",
+    gallery: [],
     githubClient: "https://github.com/your-username/shopsphere-client",
     githubServer: "https://github.com/your-username/shopsphere",
     createdAt: "2025-07-22T14:30:00Z",
+    // Added updatedAt
+    updatedAt: "2025-07-23T11:00:00Z",
   },
   {
     id: "proj_003",
     title: 'Real-time Chat Application "ChitChat"',
-    description:
-      "A web-based chat application using WebSockets for instant messaging. Users can join rooms, send messages, and see who is currently online. Built with a focus on low latency and scalability.",
-    imageUrl:
+    description: "A web-based chat application using WebSockets...",
+    // Renamed imageUrl to image
+    image:
       "https://repository-images.githubusercontent.com/668679012/d9c018e7-4b26-4261-928d-04a8868973a1",
     technologies: ["React", "Socket.IO", "Node.js", "Redis"],
     liveUrl: "#",
+    category: "Full Stack",
+    status: "In Development",
+    gallery: [],
     githubClient: "https://github.com/your-username/chitchat-app",
     githubServer: "https://github.com/your-username/chitchat-app",
     createdAt: "2025-05-01T18:45:00Z",
+    // Added updatedAt
+    updatedAt: "2025-08-10T16:20:00Z",
   },
 ];
 
-// Define and export the Project type so other components can use it
-export type Project = (typeof dummyProjects)[0];
+// CHANGE 3: Remove the old, locally inferred 'Project' type. We will use TProject directly.
+// export type Project = (typeof dummyProjects)[0]; // DELETE THIS LINE
 
 const ProjectsPage = () => {
+  // CHANGE 4: Update the state to use the TProject type
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projects, setProjects] = useState<Project[]>(dummyProjects);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [projects, setProjects] = useState<TProject[]>(dummyProjects);
+  const [editingProject, setEditingProject] = useState<TProject | null>(null);
 
   const handleOpenModalForCreate = () => {
     setEditingProject(null);
     setIsModalOpen(true);
   };
 
-  const handleOpenModalForEdit = (project: Project) => {
+  const handleOpenModalForEdit = (project: TProject) => {
+    // Use TProject type
     setEditingProject(project);
     setIsModalOpen(true);
   };
@@ -81,10 +99,9 @@ const ProjectsPage = () => {
     setEditingProject(null);
   };
 
-  const handleSaveProject = (projectData: Project) => {
-    // This function simulates saving data to your server.
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const promise = new Promise<void>((resolve, reject) => {
+  // CHANGE 5: Update the function signature to accept a TProject
+  const handleSaveProject = (projectData: TProject) => {
+    const promise = new Promise<void>((resolve) => {
       setTimeout(() => {
         if (editingProject) {
           // UPDATE logic
@@ -97,7 +114,7 @@ const ProjectsPage = () => {
           );
         } else {
           // CREATE logic
-          const newProject = {
+          const newProject: TProject = {
             ...projectData,
             id: `proj_${Date.now()}`,
             createdAt: new Date().toISOString(),
@@ -105,7 +122,7 @@ const ProjectsPage = () => {
           setProjects((prevProjects) => [...prevProjects, newProject]);
         }
         resolve();
-      }, 1000); // Simulate network delay
+      }, 1000);
     });
 
     toast.promise(promise, {
@@ -118,12 +135,7 @@ const ProjectsPage = () => {
   };
 
   const handleDeleteProject = (projectId: string) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this project? This action cannot be undone."
-      )
-    ) {
-      // Simulate deleting from the server
+    if (window.confirm("Are you sure you want to delete this project?")) {
       setProjects((prevProjects) =>
         prevProjects.filter((p) => p.id !== projectId)
       );
@@ -133,20 +145,19 @@ const ProjectsPage = () => {
 
   return (
     <div className="text-white">
-      {/* Page Header */}
       <div className="flex text-secondary/80 px-5 py-4 items-center justify-between mb-1">
         <h1 className="text-3xl font-bold">Manage Projects</h1>
         <button
           onClick={handleOpenModalForCreate}
-          className="flex items-center gap-2 px-4 py-2 font-semibold transition-colors rounded-lg bg-accent hover:bg-accent-hover"
+          className="flex items-center gap-2 px-4 py-2 font-semibold text-white transition-colors rounded-lg bg-accent hover:bg-accent-hover"
         >
           <PlusCircle size={20} />
           Add New Project
         </button>
       </div>
 
-      {/* Projects Table */}
-      <div className="p-6 border rounded-lg  border-border">
+      <div className="p-6 border rounded-lg border-border">
+        {/* Pass the correct props to ProjectTable */}
         <ProjectTable
           projects={projects}
           onEdit={handleOpenModalForEdit}
@@ -154,7 +165,7 @@ const ProjectsPage = () => {
         />
       </div>
 
-      {/* Modal for Creating/Editing Projects */}
+      {/* This will now work without errors */}
       <ProjectFormModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

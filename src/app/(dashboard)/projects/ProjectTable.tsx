@@ -1,10 +1,12 @@
-import { Project } from "@/app/(dashboard)/projects/page";
+// import { Project } from "@/app/(dashboard)/projects/page";
+import { TProject } from "@/types/index";
+
 import { Edit, Trash2, ExternalLink, Github } from "lucide-react";
 import Image from "next/image";
 
 interface ProjectTableProps {
-  projects: Project[];
-  onEdit: (project: Project) => void;
+  projects: TProject[];
+  onEdit: (project: TProject) => void;
   onDelete: (projectId: string) => void;
 }
 
@@ -64,7 +66,7 @@ const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
               >
                 <div className="flex items-center gap-4">
                   <Image
-                    src={project.imageUrl}
+                    src={project.image}
                     alt={project.title}
                     width={80}
                     height={48}
