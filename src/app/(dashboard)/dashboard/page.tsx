@@ -1,3 +1,7 @@
+"use client";
+
+import { useGetAllBlogsQuery } from "@/redux/api/blogApi";
+import { useGetAllProjectsQuery } from "@/redux/api/projectApi";
 import { Briefcase, Newspaper } from "lucide-react";
 
 const StatCard = ({
@@ -21,6 +25,11 @@ const StatCard = ({
 );
 
 const DashboardPage = () => {
+  const { data: projectsData } = useGetAllProjectsQuery({});
+  // const { data: blogsData } = useGetAllBlogsQuery({});
+
+  // console.log(count(blogsData));
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-secondary mb-6">
@@ -29,12 +38,13 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Total Projects"
-          value="12"
+          value={projectsData?.meta?.total}
           icon={<Briefcase size={24} />}
         />
         <StatCard
           title="Total Blog Posts"
-          value="28"
+          // value={blogsData?.meta?.total}
+          value="25"
           icon={<Newspaper size={24} />}
         />
         {/* Add more cards as needed */}

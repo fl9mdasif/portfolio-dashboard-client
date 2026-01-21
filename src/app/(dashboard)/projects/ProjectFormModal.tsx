@@ -1,8 +1,8 @@
 "use client";
 
-import { TProject } from "@/types"; // Adjust this import path to where you saved your interface
+import { TProject } from "@/types"; // Import TProjectStatus too
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react"; // Import Loader2 // Adjust path if needed
 import { ImageUploader } from "@/app/components/UI/ImageUploader";
 
 interface ProjectFormModalProps {
@@ -10,31 +10,33 @@ interface ProjectFormModalProps {
   onClose: () => void;
   onSave: (projectData: TProject) => void;
   project: TProject | null;
+  isLoading: boolean; // **[NEW]** Prop to indicate loading state
 }
 
-// Reusable UI Components with consistent styling
+// Reusable UI Components (Keep your Input, Textarea, Select components as they are)
 const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
   <input
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent"
+    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
   />
 );
 
 const Textarea = (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent"
+    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    rows={4}
   />
 );
 
 const Select = (
   props: React.SelectHTMLAttributes<HTMLSelectElement> & {
     children: React.ReactNode;
-  }
+  },
 ) => (
   <select
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent"
+    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
   />
 );
 
@@ -43,40 +45,37 @@ const ProjectFormModal = ({
   onClose,
   onSave,
   project,
+  isLoading, // **[NEW]** Destructure isLoading
 }: ProjectFormModalProps) => {
-  // Updated state to match the TProject interface
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     technologies: "",
     category: "Full Stack",
-    image: "",
+    image: "", // Initialize image as empty string
     gallery: "",
-    status: "In Development",
+    status: "In Development", // Use the specific type
     liveUrl: "",
     githubClient: "",
     githubServer: "",
   });
 
-  console.log("project", formData);
   useEffect(() => {
     if (isOpen) {
       if (project) {
-        // Populate form when editing an existing project
         setFormData({
           title: project.title,
           description: project.description,
           technologies: project.technologies.join(", "),
           category: project.category,
-          image: project.image,
-          gallery: project.gallery?.join("\n") || "", // Convert gallery array to a newline-separated string
+          image: project.image || "",
+          gallery: project.gallery?.join("\n") || "",
           status: project.status || "In Development",
           liveUrl: project.liveUrl || "",
           githubClient: project.githubClient || "",
           githubServer: project.githubServer || "",
         });
       } else {
-        // Reset form when creating a new project
         setFormData({
           title: "",
           description: "",
@@ -96,7 +95,7 @@ const ProjectFormModal = ({
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -108,18 +107,17 @@ const ProjectFormModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return; // Prevent submission if already loading
+
     const projectData: TProject = {
-      id: project?.id || "",
-      createdAt: project?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(), // Always set updatedAt on save
       title: formData.title,
       description: formData.description,
       category: formData.category,
-      status: formData.status as TProject["status"],
+      status: formData.status || "Live",
       image: formData.image,
-      liveUrl: formData.liveUrl,
-      githubClient: formData.githubClient,
-      githubServer: formData.githubServer,
+      liveUrl: formData.liveUrl || undefined, // Send undefined if empty
+      githubClient: formData.githubClient || undefined, // Send undefined if empty
+      githubServer: formData.githubServer || undefined, // Send undefined if empty
       technologies: formData.technologies
         .split(",")
         .map((t) => t.trim())
@@ -128,15 +126,18 @@ const ProjectFormModal = ({
         .split("\n")
         .map((url) => url.trim())
         .filter(Boolean),
+      createdAt: "",
+      updatedAt: "",
     };
     onSave(projectData);
   };
 
-  const isFormValid =
-    formData.title &&
-    formData.technologies &&
-    formData.image &&
-    formData.category;
+  // **[MODIFIED]** Re-enabled image validation
+  // const isFormValid =
+  //   formData.title &&
+  //   formData.technologies &&
+  //   formData.image && // Check if image URL exists
+  //   formData.category;
 
   if (!isOpen) return null;
 
@@ -150,11 +151,13 @@ const ProjectFormModal = ({
           <button
             onClick={onClose}
             className="text-text-secondary hover:text-white"
+            disabled={isLoading}
           >
             <X size={24} />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Image Uploader */}
           <div>
             <label className="block mb-1 text-sm font-medium text-text-secondary">
               Main Project Image
@@ -164,13 +167,21 @@ const ProjectFormModal = ({
               onUploadSuccess={handleImageUpload}
               initialImageUrl={formData.image}
             />
+
+            {/* Simple validation message */}
+            {!formData.image && (
+              <p className="text-red-500 text-xs mt-1">Image is required.</p>
+            )}
           </div>
+
+          {/* Title & Description */}
           <Input
             name="title"
             placeholder="Project Title"
             value={formData.title}
             onChange={handleInputChange}
             required
+            disabled={isLoading}
           />
           <Textarea
             name="description"
@@ -178,8 +189,10 @@ const ProjectFormModal = ({
             value={formData.description}
             onChange={handleInputChange}
             required
+            disabled={isLoading}
           />
 
+          {/* Category & Status */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="block mb-1 text-sm font-medium text-text-secondary">
@@ -189,6 +202,7 @@ const ProjectFormModal = ({
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
+                disabled={isLoading}
               >
                 <option>Full Stack</option>
                 <option>Frontend</option>
@@ -206,6 +220,7 @@ const ProjectFormModal = ({
                 name="status"
                 value={formData.status}
                 onChange={handleInputChange}
+                disabled={isLoading}
               >
                 <option>In Development</option>
                 <option>Completed</option>
@@ -215,6 +230,7 @@ const ProjectFormModal = ({
             </div>
           </div>
 
+          {/* Technologies */}
           <div>
             <label className="block mb-1 text-sm font-medium text-text-secondary">
               Technologies (comma-separated)
@@ -225,12 +241,14 @@ const ProjectFormModal = ({
               value={formData.technologies}
               onChange={handleInputChange}
               required
+              disabled={isLoading}
             />
           </div>
 
+          {/* Image Gallery */}
           <div>
             <label className="block mb-1 text-sm font-medium text-text-secondary">
-              Image Gallery (one URL per line)
+              Image Gallery (one URL per line, optional)
             </label>
             <Textarea
               name="gallery"
@@ -238,46 +256,73 @@ const ProjectFormModal = ({
               value={formData.gallery}
               onChange={handleInputChange}
               rows={3}
+              disabled={isLoading}
             />
           </div>
 
+          {/* URLs */}
           <div className="grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
-            <Input
-              name="githubClient"
-              placeholder="GitHub Client URL (https://...)"
-              value={formData.githubClient}
-              onChange={handleInputChange}
-            />
-            <Input
-              name="githubServer"
-              placeholder="GitHub Server URL (https://...)"
-              value={formData.githubServer}
-              onChange={handleInputChange}
-            />
+            {/* **[NEW]** Added Labels */}
+            <div>
+              <label className="block mb-1 text-sm font-medium text-text-secondary">
+                GitHub Client URL (optional)
+              </label>
+              <Input
+                name="githubClient"
+                placeholder="https://github.com/..."
+                value={formData.githubClient}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-text-secondary">
+                GitHub Server URL (optional)
+              </label>
+              <Input
+                name="githubServer"
+                placeholder="https://github.com/..."
+                value={formData.githubServer}
+                onChange={handleInputChange}
+                disabled={isLoading}
+              />
+            </div>
             <div className="md:col-span-2">
+              <label className="block mb-1 text-sm font-medium text-text-secondary">
+                Live URL (optional)
+              </label>
               <Input
                 name="liveUrl"
-                placeholder="Live URL (https://...)"
+                placeholder="https://..."
                 value={formData.liveUrl}
                 onChange={handleInputChange}
+                disabled={isLoading}
               />
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="flex justify-end gap-4 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-secondary text-text-main hover:bg-border"
+              disabled={isLoading}
+              className="px-4 py-2 rounded-lg bg-secondary text-text-main hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={!isFormValid}
-              className="px-4 py-2 font-semibold text-white rounded-lg bg-accent hover:bg-accent-hover disabled:bg-gray-600 disabled:cursor-not-allowed"
+              // **[MODIFIED]** Updated styles & disabled logic
+              // disabled={!isFormValid || isLoading}
+              className="flex items-center justify-center px-4 py-2 font-semibold text-white rounded-lg bg-green-500 hover:bg-accent-hover"
             >
-              Save Project
+              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {isLoading
+                ? project
+                  ? "Saving..."
+                  : "Creating..."
+                : "Save Project"}
             </button>
           </div>
         </form>

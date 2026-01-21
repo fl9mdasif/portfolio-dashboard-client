@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Need to use the React-specific entry point to import createApi
 import { axiosBaseQuery } from "@/helpers/axios/axiosBaseQuery";
 import { createApi } from "@reduxjs/toolkit/query/react";

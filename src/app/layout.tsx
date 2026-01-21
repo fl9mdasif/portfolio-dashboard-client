@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // app/layout.tsx
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+// @ts-ignore: Allow side-effect CSS import without module declarations
 import "./globals.css"; // <-- CORRECT IMPORT PATH
 import { Toaster } from "react-hot-toast";
 import { ReduxProvider } from "@/redux/reduxProvider";
@@ -18,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning={true}>
+      <body className={inter.className} suppressHydrationWarning>
         <ReduxProvider>
           <Toaster
             position="top-center"

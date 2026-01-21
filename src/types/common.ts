@@ -17,7 +17,7 @@ export type IGenericErrorMessage = {
 };
 
 export interface TProject {
-  id: string;
+  _id?: string
   title: string;
   description: string;
   technologies: string[];
@@ -25,9 +25,9 @@ export interface TProject {
   githubClient?: string;
   githubServer?: string;
   liveUrl?: string;
-  image: string;
+  image?: string;
   gallery?: string[];
-  status?: 'Live' | 'In Development' | 'On Hold' | 'Completed' ;
+  status?: 'Live' | 'In Development' | 'On Hold' | 'Completed' | string;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,14 +42,14 @@ export interface Skill {
   updatedAt: string;
 }
 
-export interface Blog {
-  id: string;
+export interface TBlog {
+  _id?: string;
   title: string;
-  slug: string;
+  description: string;
   coverImage?: string;
-  tags?: string[];
-  author: string;
-  views?: number;
+  status?: 'Draft' | 'Published' | 'Archived' | string;
+  author?: string;
+  likes?: number;
   published: boolean;
   createdAt: string;
   updatedAt: string;

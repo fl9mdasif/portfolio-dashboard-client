@@ -1,11 +1,12 @@
+// import { get } from "http";
 import { tagTypes } from "../tag-types";
 import { baseApi } from "./baseApi";
 
 const blogApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    createPet: build.mutation({
+    createBlog: build.mutation({
       query: (data) => ({
-        url: "/blogs",
+        url: "/blogs/create-blog",
         method: "POST",
         contentType: "application/json",
         data,
@@ -23,28 +24,28 @@ const blogApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.blogs],
     }),
 
-    getSinglePet: build.query({
-      query: (petId) => (
-        console.log("singleId", petId),
+    getSingleBlog: build.query({
+      query: (id) => (
+        console.log("singleId", id),
         {
-          url: `/pets/${petId}`,
+          url: `/blogs/${id}`,
           method: "GET",
         }
       ),
     }),
 
-    updatePet: build.mutation({
+    updateBlog: build.mutation({
       query: ({ id, data }) => ({
-        url: `/pets/${id}`,
+        url: `/blogs/${id}`,
         method: "PATCH",
         data,
       }),
       invalidatesTags: [tagTypes.blogs],
     }),
 
-    deletePet: build.mutation({
+    deleteBlog: build.mutation({
       query: (id) => ({
-        url: `/pets/${id}`,
+        url: `/blogs/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: [tagTypes.blogs],
@@ -53,9 +54,9 @@ const blogApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useCreatePetMutation,
-  useDeletePetMutation,
+  useCreateBlogMutation,
   useGetAllBlogsQuery,
-  useGetSinglePetQuery,
-  useUpdatePetMutation,
+  useGetSingleBlogQuery,
+  useUpdateBlogMutation,
+  useDeleteBlogMutation,
 } = blogApi;

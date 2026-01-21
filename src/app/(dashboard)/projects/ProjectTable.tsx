@@ -1,4 +1,5 @@
 // import { Project } from "@/app/(dashboard)/projects/page";
+// import { useGetAllProjectsQuery } from "@/redux/api/projectApi";
 import { TProject } from "@/types/index";
 
 import { Edit, Trash2, ExternalLink, Github } from "lucide-react";
@@ -6,11 +7,17 @@ import Image from "next/image";
 
 interface ProjectTableProps {
   projects: TProject[];
+  refetch: () => void;
   onEdit: (project: TProject) => void;
   onDelete: (projectId: string) => void;
 }
 
-const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
+const ProjectTable = ({
+  refetch,
+  onEdit,
+  projects,
+  onDelete,
+}: ProjectTableProps) => {
   // Helper to format the date string
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -19,6 +26,9 @@ const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
       day: "numeric",
     });
   };
+  // const { data } = useGetAllProjectsQuery("");
+
+  // console.log("dbData", data);
 
   if (projects.length === 0) {
     return (
@@ -57,7 +67,7 @@ const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
         <tbody>
           {projects.map((project) => (
             <tr
-              key={project.id}
+              key={project._id}
               className="border-b bg-primary/40 border-border hover:bg-secondary/40 transition-colors"
             >
               <th
@@ -66,7 +76,7 @@ const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
               >
                 <div className="flex items-center gap-4">
                   <Image
-                    src={project.image}
+                    src={project.image || ""}
                     alt={project.title}
                     width={80}
                     height={48}
@@ -77,15 +87,9 @@ const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
               </th>
 
               <td className="px-6 py-4">
-                {project.liveUrl && project.liveUrl !== "#" ? (
-                  <span className="px-2 py-1 text-xs font-medium text-white bg-green-700 rounded-full">
-                    Live
-                  </span>
-                ) : (
-                  <span className="px-2 py-1 text-xs font-medium text-yellow-300 bg-yellow-900/50 rounded-full">
-                    Offline
-                  </span>
-                )}
+                <span className="px-2 py-1 text-xs font-medium text-white bg-green-700 rounded-full">
+                  {project.status}
+                </span>
               </td>
 
               <td className="px-6 py-4">{formatDate(project.createdAt)}</td>
@@ -125,14 +129,16 @@ const ProjectTable = ({ projects, onEdit, onDelete }: ProjectTableProps) => {
               <td className="px-6 py-4">
                 <div className="flex justify-center gap-4">
                   <button
-                    onClick={() => onEdit(project)}
+                    onClick={() => project._id && onEdit(project) && refetch()}
                     className="btn  text-green-800 hover:text-blue-400"
                     title="Edit Project"
                   >
                     <Edit size={18} />
                   </button>
                   <button
-                    onClick={() => onDelete(project.id)}
+                    onClick={() =>
+                      project._id && onDelete(project._id) && refetch()
+                    }
                     className="text-red-500im hover:text-red-400"
                     title="Delete Project"
                   >
