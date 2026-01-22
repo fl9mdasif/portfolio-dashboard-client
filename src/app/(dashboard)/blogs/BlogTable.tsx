@@ -43,9 +43,9 @@ const BlogTable = ({ onEdit, blogs, onDelete }: BlogTableProps) => {
           {blogs.map((blog) => (
             <tr
               key={blog._id}
-              className="border-b bg-primary/40 border-border hover:bg-secondary/40 transition-colors"
+              className="border-b bg-primary/60 hover:bg-secondary/20 hover:text-black border-border hover transition-colors"
             >
-              <td className="px-6 py-4 font-medium text-white">
+              <td className="px-6 py-4 font-medium ">
                 <div className="flex items-center gap-4">
                   <Image
                     src={blog.coverImage || ""}
@@ -71,13 +71,13 @@ const BlogTable = ({ onEdit, blogs, onDelete }: BlogTableProps) => {
                     onClick={() => onEdit(blog)}
                     className="text-green-500 hover:text-green-400"
                   >
-                    <Edit size={18} />
+                    <Edit className="text-[#33ff00]" size={18} />
                   </button>
                   <button
                     onClick={() => blog._id && onDelete(blog._id)}
                     className="text-red-500 hover:text-red-400"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 className="text-[#d80000]" size={18} />
                   </button>
                 </div>
               </td>

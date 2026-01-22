@@ -17,14 +17,14 @@ interface ProjectFormModalProps {
 const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
   <input
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
   />
 );
 
 const Textarea = (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
     rows={4}
   />
 );
@@ -36,7 +36,7 @@ const Select = (
 ) => (
   <select
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
   />
 );
 
@@ -307,7 +307,7 @@ const ProjectFormModal = ({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2 rounded-lg bg-secondary text-text-main hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 rounded-lg bg-white text-black text-text-main hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>

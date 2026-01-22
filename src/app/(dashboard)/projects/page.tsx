@@ -25,6 +25,7 @@ const ProjectsPage = () => {
   const { data: projectsData, refetch, isLoading } = useGetAllProjectsQuery({});
   const projects = projectsData?.data; // Extract the data array
 
+  // console.log("projects", projects);
   // Mutation hooks
   const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
   const [updateProject, { isLoading: isUpdating }] = useUpdateProjectMutation();
@@ -103,7 +104,7 @@ const ProjectsPage = () => {
   return (
     <div className="text-white">
       {/* Header */}
-      <div className="flex text-secondary/80 px-5 py-4 items-center justify-between mb-1">
+      <div className="flex text-primary px-5 py-4 items-center justify-between mb-1">
         <h1 className="text-3xl font-bold">Manage Projects</h1>
         <button
           onClick={handleOpenModalForCreate}

@@ -68,11 +68,11 @@ const ProjectTable = ({
           {projects.map((project) => (
             <tr
               key={project._id}
-              className="border-b bg-primary/40 border-border hover:bg-secondary/40 transition-colors"
+              className="border-b bg-primary/60 border-border hover:bg-secondary/20 hover:text-black transition-colors"
             >
               <th
                 scope="row"
-                className="px-6 py-4 font-medium text-white whitespace-nowrap"
+                className="px-6 py-4 font-medium  whitespace-nowrap"
               >
                 <div className="flex items-center gap-4">
                   <Image
@@ -100,10 +100,10 @@ const ProjectTable = ({
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-text-secondary hover:text-accent"
+                    className="text-secondary hover:text-"
                     title="View Live Site"
                   >
-                    <ExternalLink size={18} />
+                    <ExternalLink className="text-[#1d00d8]" size={18} />
                   </a>
                   <a
                     href={project.githubClient}
@@ -112,7 +112,7 @@ const ProjectTable = ({
                     className="text-text-secondary hover:text-white"
                     title="View GitHub Repo"
                   >
-                    <Github size={18} />
+                    <Github className="text-[#1d00d8]" size={18} />
                   </a>
                   <a
                     href={project.githubServer}
@@ -121,7 +121,7 @@ const ProjectTable = ({
                     className="text-text-secondary hover:text-white"
                     title="View GitHub Repo"
                   >
-                    <Github size={18} />
+                    <Github className="text-[#1d00d8]" size={18} />
                   </a>
                 </div>
               </td>
@@ -133,16 +133,16 @@ const ProjectTable = ({
                     className="btn  text-green-800 hover:text-blue-400"
                     title="Edit Project"
                   >
-                    <Edit size={18} />
+                    <Edit className="text-[#55ff55]" size={18} />
                   </button>
                   <button
                     onClick={() =>
                       project._id && onDelete(project._id) && refetch()
                     }
-                    className="text-red-500im hover:text-red-400"
+                    className="text-red-500 hover:text-red-400"
                     title="Delete Project"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 className="text-[#d80000]" size={18} />
                   </button>
                 </div>
               </td>

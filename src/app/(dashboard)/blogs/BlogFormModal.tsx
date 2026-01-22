@@ -17,14 +17,14 @@ interface BlogFormModalProps {
 const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
   <input
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
   />
 );
 
 const Textarea = (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
+    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50"
     rows={6}
   />
 );
@@ -36,7 +36,7 @@ const Select = (
 ) => (
   <select
     {...props}
-    className="w-full p-2 bg-secondary border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent"
+    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent"
   />
 );
 
@@ -74,6 +74,10 @@ const BlogFormModal = ({
     }
   }, [blog, isOpen]);
 
+  const handleImageUpload = (url: string) => {
+    setFormData((prev) => ({ ...prev, coverImage: url }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData as any);
@@ -101,12 +105,16 @@ const BlogFormModal = ({
             <label className="block mb-1 text-sm font-medium text-text-secondary">
               Blog Cover Image
             </label>
+
             <ImageUploader
-              onUploadSuccess={(url) =>
-                setFormData((prev) => ({ ...prev, coverImage: url }))
-              }
+              onUploadSuccess={handleImageUpload}
               initialImageUrl={formData.coverImage}
             />
+
+            {/* Simple validation message */}
+            {!formData.coverImage && (
+              <p className="text-red-500 text-xs mt-1">Image is required.</p>
+            )}
           </div>
 
           <Input
@@ -146,7 +154,7 @@ const BlogFormModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-secondary"
+              className="px-4 py-2 rounded-lg bg-white text-black"
             >
               Cancel
             </button>

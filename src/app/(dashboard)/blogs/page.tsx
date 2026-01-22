@@ -5,8 +5,6 @@ import { useState } from "react";
 import { PlusCircle, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
-// [১] আপনার API Slice থেকে Blog Hooks ইম্পোর্ট করুন
-
 import { TBlog } from "@/types";
 import {
   useCreateBlogMutation,
@@ -22,10 +20,10 @@ const BlogsPage = () => {
   const [editingBlog, setEditingBlog] = useState<TBlog | null>(null);
 
   // Fetch blogs using RTK Query
-  const { data: blogs, refetch, isLoading } = useGetAllBlogsQuery({});
-  //   const blogs = blogsData?.data;
+  const { data: blogData, refetch, isLoading } = useGetAllBlogsQuery({});
+  const blogs = blogData?.data;
 
-  //   console.log(blogsData);
+  // console.log(blogs, "blogsData");
 
   // Mutation hooks
   const [createBlog, { isLoading: isCreating }] = useCreateBlogMutation();
@@ -47,39 +45,43 @@ const BlogsPage = () => {
     setEditingBlog(null);
   };
 
+  // ... (অন্যান্য কোড ঠিক আছে)
+
+  const handleDeleteBlog = async (blogId: string) => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      try {
+        await deleteBlog(blogId).unwrap();
+        toast.success("Blog deleted successfully!");
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Failed to delete blog.");
+      }
+    }
+  };
+
   const handleSaveBlog = async (blogFormData: Partial<TBlog>) => {
     const payload = { ...blogFormData };
+
+    // /console.log("blogid", id);
+
+    delete payload._id;
     delete payload._id;
     delete payload.createdAt;
     delete payload.updatedAt;
 
     try {
       if (editingBlog?._id) {
-        // UPDATE Logic
         await updateBlog({
-          id: editingBlog._id,
+          id: editingBlog?._id,
           data: payload,
         }).unwrap();
         toast.success("Blog updated successfully!");
       } else {
-        // CREATE Logic
         await createBlog(payload).unwrap();
         toast.success("Blog created successfully!");
       }
       handleCloseModal();
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to save blog.");
-    }
-  };
-
-  const handleDeleteBlog = async (blogId: string) => {
-    if (window.confirm("Are you sure you want to delete this blog?")) {
-      try {
-        await deleteBlog([blogId]).unwrap();
-        toast.success("Blog deleted successfully!");
-      } catch (error: any) {
-        toast.error(error?.data?.message || "Failed to delete blog.");
-      }
     }
   };
 
@@ -93,11 +95,11 @@ const BlogsPage = () => {
 
   return (
     <div className="text-white">
-      <div className="flex text-secondary/80 px-5 py-4 items-center justify-between mb-1">
+      <div className="flex text-primary px-5 py-4 items-center justify-between mb-1">
         <h1 className="text-3xl font-bold">Manage Blogs</h1>
         <button
           onClick={handleOpenModalForCreate}
-          className="flex items-center gap-2 px-4 py-2 font-semibold text-white transition-colors rounded-lg bg-accent hover:bg-accent-hover"
+          className=" flex items-center gap-2 px-4 py-2 font-semibold text-white transition-colors rounded-lg bg-accent hover:bg-accent-hover"
         >
           <PlusCircle size={20} />
           Add New Blog

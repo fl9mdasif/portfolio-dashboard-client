@@ -27,7 +27,7 @@ const AuthButton = () => {
       {userInfo?._id && (
         <button
           onClick={handleLogOut}
-          className="text-red-500 border border-red-500 rounded-2xl font-bold px-3 py-2"
+          className=" rounded-2xl font-bold px-3 py-2"
         >
           Logout
         </button>

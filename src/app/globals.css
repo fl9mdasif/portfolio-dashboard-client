@@ -4,9 +4,9 @@
 :root {
   --background: #f8fafc; /* Very light slate */
   --foreground: #0f172a; /* Deep slate for text */
-  --primary: #143784;    /* Teal accent */
-  --secondary: #b4005d;  /* Muted slate gray */
-  --border: #e2e8f0;     /* Light border */
+  --primary: #0093a6;    /* Teal accent */
+  --secondary: #d8df09;  /* Muted slate gray */
+  --textC: #ffc800;     /* Light border */
   --card-bg: #746b6b;    /* Card background */
 }
 
@@ -15,7 +15,7 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
-  --color-border: var(--border);
+  --color-textC: var(--textC);
   --color-card: var(--card-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
