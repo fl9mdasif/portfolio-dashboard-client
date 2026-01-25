@@ -1,9 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { USER_ROLE } from "@/contains/role";
 
-// export type ResponseSuccessType = {
-//   data: any;
-//   meta?: TMeta;
-// };
+export type ResponseSuccessType = {
+  data: any;
+  meta?: TMeta;
+};
+
+export type TMeta = {
+  limit: number;
+  page: number;
+  total: number;
+  // totalPage: number;
+};
 
 export type IGenericErrorResponse = {
   statusCode: number;
