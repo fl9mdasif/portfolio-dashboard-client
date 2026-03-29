@@ -62,3 +62,24 @@ export interface TBlog {
   createdAt: string;
   updatedAt: string;
 }
+export interface TSkill {
+  _id?: string;
+  name: string;
+  level?: number; // 0 to 100
+  category: string; // e.g. 'Frontend', 'Backend', 'Tools'
+  image: string; // Icon image URL
+  isSelect?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface TReview {
+  _id?: string;
+  userName: string;
+  userTitle?: string;
+  rating: number; // 1 to 5
+  comment: string;
+  isPublished?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}

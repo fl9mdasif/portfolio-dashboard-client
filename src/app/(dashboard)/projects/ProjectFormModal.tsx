@@ -3,7 +3,7 @@
 import { TProject } from "@/types"; // Import TProjectStatus too
 import { useEffect, useState } from "react";
 import { X, Loader2 } from "lucide-react"; // Import Loader2 // Adjust path if needed
-import { ImageUploader } from "@/app/components/UI/ImageUploader";
+import { ImageUploader } from "@/services/ImageUploader";
 
 interface ProjectFormModalProps {
   isOpen: boolean;
@@ -17,17 +17,18 @@ interface ProjectFormModalProps {
 const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
   <input
     {...props}
-    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    className="w-full px-3 py-2 rounded-lg bg-[#161b27] border border-white/[0.08] text-slate-200 placeholder:text-slate-600 text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 disabled:opacity-50 transition-colors"
   />
 );
 
 const Textarea = (props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea
     {...props}
-    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    className="w-full px-3 py-2 rounded-lg bg-[#161b27] border border-white/[0.08] text-slate-200 placeholder:text-slate-600 text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 disabled:opacity-50 transition-colors resize-none"
     rows={4}
   />
 );
+
 
 const Select = (
   props: React.SelectHTMLAttributes<HTMLSelectElement> & {
@@ -36,9 +37,10 @@ const Select = (
 ) => (
   <select
     {...props}
-    className="w-full p-2 bg-white text-black border rounded-lg text-text-main border-border focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed" // Added disabled styles
+    className="w-full px-3 py-2 rounded-lg bg-[#161b27] border border-white/[0.08] text-slate-200 text-sm focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30 disabled:opacity-50 transition-colors"
   />
 );
+
 
 const ProjectFormModal = ({
   isOpen,
@@ -142,24 +144,24 @@ const ProjectFormModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-300">
-      <div className="w-full max-w-3xl p-6 m-4 overflow-y-auto border rounded-lg shadow-xl bg-primary border-border max-h-[90vh]">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+      <div className="w-full max-w-3xl m-4 rounded-2xl border border-white/[0.08] bg-[#0d1117] shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+          <h2 className="text-base font-semibold text-white">
             {project ? "Edit Project" : "Create New Project"}
           </h2>
           <button
             onClick={onClose}
-            className="text-text-secondary hover:text-white"
             disabled={isLoading}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/[0.06] transition-colors disabled:opacity-50"
           >
-            <X size={24} />
+            <X size={18} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Image Uploader */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
           <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">
+            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">
               Main Project Image
             </label>
 
@@ -174,36 +176,15 @@ const ProjectFormModal = ({
             )}
           </div>
 
-          {/* Title & Description */}
-          <Input
-            name="title"
-            placeholder="Project Title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-            disabled={isLoading}
-          />
-          <Textarea
-            name="description"
-            placeholder="Project Description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
-            disabled={isLoading}
-          />
-
-          {/* Category & Status */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Input name="title" placeholder="Project Title" value={formData.title} onChange={handleInputChange} required disabled={isLoading} />
+            <Input name="technologies" placeholder="Technologies (comma-separated: Next.js, TypeScript)" value={formData.technologies} onChange={handleInputChange} required disabled={isLoading} />
+          </div>
+          <Textarea name="description" placeholder="Project Description" value={formData.description} onChange={handleInputChange} required disabled={isLoading} />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 text-sm font-medium text-text-secondary">
-                Category
-              </label>
-              <Select
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              >
+              <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Category</label>
+              <Select name="category" value={formData.category} onChange={handleInputChange} disabled={isLoading}>
                 <option>Full Stack</option>
                 <option>Frontend</option>
                 <option>Backend</option>
@@ -213,15 +194,8 @@ const ProjectFormModal = ({
               </Select>
             </div>
             <div>
-              <label className="block mb-1 text-sm font-medium text-text-secondary">
-                Status
-              </label>
-              <Select
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              >
+              <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
+              <Select name="status" value={formData.status} onChange={handleInputChange} disabled={isLoading}>
                 <option>In Development</option>
                 <option>Completed</option>
                 <option>Live</option>
@@ -230,99 +204,38 @@ const ProjectFormModal = ({
             </div>
           </div>
 
-          {/* Technologies */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">
-              Technologies (comma-separated)
-            </label>
-            <Input
-              name="technologies"
-              placeholder="Next.js, TypeScript, Tailwind CSS"
-              value={formData.technologies}
-              onChange={handleInputChange}
-              required
-              disabled={isLoading}
-            />
-          </div>
-
           {/* Image Gallery */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-text-secondary">
-              Image Gallery (one URL per line, optional)
-            </label>
-            <Textarea
-              name="gallery"
-              placeholder="https://.../image1.png&#10;https://.../image2.png"
-              value={formData.gallery}
-              onChange={handleInputChange}
-              rows={3}
-              disabled={isLoading}
-            />
+            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Image Gallery <span className="normal-case text-slate-600">(one URL per line, optional)</span></label>
+            <Textarea name="gallery" placeholder="https://.../image1.png" value={formData.gallery} onChange={handleInputChange} rows={3} disabled={isLoading} />
           </div>
 
           {/* URLs */}
-          <div className="grid grid-cols-1 gap-4 pt-2 md:grid-cols-2">
-            {/* **[NEW]** Added Labels */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block mb-1 text-sm font-medium text-text-secondary">
-                GitHub Client URL (optional)
-              </label>
-              <Input
-                name="githubClient"
-                placeholder="https://github.com/..."
-                value={formData.githubClient}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              />
+              <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">GitHub Client URL <span className="normal-case text-slate-600">(optional)</span></label>
+              <Input name="githubClient" placeholder="https://github.com/..." value={formData.githubClient} onChange={handleInputChange} disabled={isLoading} />
             </div>
             <div>
-              <label className="block mb-1 text-sm font-medium text-text-secondary">
-                GitHub Server URL (optional)
-              </label>
-              <Input
-                name="githubServer"
-                placeholder="https://github.com/..."
-                value={formData.githubServer}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              />
+              <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">GitHub Server URL <span className="normal-case text-slate-600">(optional)</span></label>
+              <Input name="githubServer" placeholder="https://github.com/..." value={formData.githubServer} onChange={handleInputChange} disabled={isLoading} />
             </div>
             <div className="md:col-span-2">
-              <label className="block mb-1 text-sm font-medium text-text-secondary">
-                Live URL (optional)
-              </label>
-              <Input
-                name="liveUrl"
-                placeholder="https://..."
-                value={formData.liveUrl}
-                onChange={handleInputChange}
-                disabled={isLoading}
-              />
+              <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Live URL <span className="normal-case text-slate-600">(optional)</span></label>
+              <Input name="liveUrl" placeholder="https://..." value={formData.liveUrl} onChange={handleInputChange} disabled={isLoading} />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-4 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              className="px-4 py-2 rounded-lg bg-white text-black text-text-main hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+          <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.06]">
+            <button type="button" onClick={onClose} disabled={isLoading}
+              className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-white/[0.06] border border-white/[0.06] transition-colors disabled:opacity-50">
               Cancel
             </button>
-            <button
-              type="submit"
-              // **[MODIFIED]** Updated styles & disabled logic
-              // disabled={!isFormValid || isLoading}
-              className="flex items-center justify-center px-4 py-2 font-semibold text-white rounded-lg bg-green-500 hover:bg-accent-hover"
-            >
-              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {isLoading
-                ? project
-                  ? "Saving..."
-                  : "Creating..."
-                : "Save Project"}
+            <button type="submit"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-teal-600 hover:bg-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isLoading ? (project ? "Saving..." : "Creating...") : "Save Project"}
             </button>
           </div>
         </form>

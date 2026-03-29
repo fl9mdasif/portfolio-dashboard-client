@@ -1,5 +1,6 @@
 "use client";
 
+import { logoutUser } from "@/services/actions/logoutUser";
 import { getUserInfo, removeUser } from "@/services/auth.services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"; // useEffect যোগ করুন
@@ -14,8 +15,9 @@ const AuthButton = () => {
 
   const userInfo = getUserInfo();
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     removeUser();
+    await logoutUser();
     router.push("/login");
     router.refresh();
   };

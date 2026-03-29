@@ -1,113 +1,155 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { z } from "zod";
-import Link from "next/link";
-import { toast } from "sonner";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 import { loginUser } from "@/services/actions/loginUser";
 import { storeUserInfo } from "@/services/auth.services";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { loginSchema } from "@/utils/interface";
-import RForm from "../components/Forms/RForm";
-import RInput from "../components/Forms/RInput";
 
-export type ValidationSchemaType = z.infer<typeof loginSchema>;
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+} from "@/components/ui/field";
+import { Loader2, Lock, Mail } from "lucide-react";
+import Link from "next/link";
 
-const LoginPage = () => {
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+export default function LoginPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handelSubmit = async (values: any) => {
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (values: LoginFormValues) => {
+    setLoading(true);
+    setError("");
     try {
       const res = await loginUser(values);
 
       if (res?.data?.accessToken) {
-        toast.success(res?.message);
-
+        toast.success(res?.message || "Login successful!");
         storeUserInfo({ accessToken: res?.data?.accessToken });
-
         router.push("/dashboard");
         router.refresh();
       } else {
-        setError(res.message);
-        // console.log(res);
+        setError(res?.message || "Invalid credentials. Please try again.");
+        toast.error(res?.message || "Login failed.");
       }
     } catch (err: any) {
       console.error(err.message);
+      setError("An unexpected error occurred. Please try again later.");
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4">
-      {/* <Navbar /> */}
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="w-full max-w-xl rounded-lg bg-white p-6 text-center shadow-lg">
-          <div className="flex flex-col items-center justify-center">
-            <div>
-              {/* <Image src={assets.svgs.logo} width={50} height={50} alt="logo" /> */}
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Login User
-              </h2>
-            </div>
-          </div>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0a0a0a]">
+      {/* Background Gradients */}
+      <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-teal-500/10 blur-[100px]" />
+      <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]" />
 
+      <Card className="w-full max-w-md border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 hover:border-teal-500/30">
+        <CardHeader className="space-y-1 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-500/10 text-teal-500 ring-1 ring-teal-500/20">
+            <Lock className="h-6 w-6" />
+          </div>
+          <CardTitle className="text-3xl font-bold tracking-tight text-white">
+            Admin Login
+          </CardTitle>
+          <CardDescription className="text-gray-400">
+            Enter your credentials to manage your portfolio
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           {error && (
-            <div className="mt-2 rounded-md bg-red-100 p-2 text-sm font-medium text-red-700">
-              <p>{error}</p>
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-sm font-medium text-red-400">
+              {error}
             </div>
           )}
 
-          <div className="mt-6 text-left">
-            <RForm onSubmit={handelSubmit} resolver={zodResolver(loginSchema)}>
-              <div className="my-2 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <RInput
-                    name="email"
-                    label="Email"
-                    type="email"
-                    fullWidth={true}
-                    required={true}
-                  />
-                </div>
-                <div>
-                  <RInput
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth={true}
-                    required={true}
-                  />
-                </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Field>
+              <FieldLabel className="text-gray-300 font-medium">Email Address</FieldLabel>
+              <div className="relative group/input">
+                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-500 transition-colors group-focus-within/input:text-teal-500" />
+                <Input
+                  placeholder="admin@example.com"
+                  className="border-white/10 bg-white/5 pl-10 text-white placeholder:text-gray-600 focus-visible:ring-teal-500/50"
+                  {...form.register("email")}
+                  aria-invalid={!!form.formState.errors.email}
+                />
               </div>
+              <FieldError errors={[form.formState.errors.email]} className="text-red-400" />
+            </Field>
 
-              {/* <p className="mb-2 text-right text-sm font-light">
-                 Forgot Password?
-               </p> */}
+            <Field>
+              <FieldLabel className="text-gray-300 font-medium">Password</FieldLabel>
+              <div className="relative group/input">
+                <Lock className="absolute left-3 top-2.5 h-4 w-4 text-gray-500 transition-colors group-focus-within/input:text-teal-500" />
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  className="border-white/10 bg-white/5 pl-10 text-white placeholder:text-gray-600 focus-visible:ring-teal-500/50"
+                  {...form.register("password")}
+                  aria-invalid={!!form.formState.errors.password}
+                />
+              </div>
+              <FieldError errors={[form.formState.errors.password]} className="text-red-400" />
+            </Field>
 
-              <button
-                type="submit"
-                className="my-3 w-full rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-              >
-                Login
-              </button>
-              <p className="text-center text-sm font-light text-gray-600">
-                Dont have an account?{" "}
-                <Link
-                  href="/register"
-                  className="font-medium text-blue-600 hover:underline"
-                >
-                  Create an account
-                </Link>
-              </p>
-            </RForm>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-teal-600 font-semibold text-white hover:bg-teal-500"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Authenticating...
+                </>
+              ) : (
+                "Login"
+              )}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-2 text-center text-sm">
+          <Link
+            href="/register"
+            className="text-gray-500 transition-colors hover:text-teal-400"
+          >
+            Don&apos;t have an account? Create one
+          </Link>
+          <div className="text-xs text-gray-600">
+            &copy; {new Date().getFullYear()} Md Asif Al Azad. All rights reserved.
           </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
-};
-
-export default LoginPage;
+}
