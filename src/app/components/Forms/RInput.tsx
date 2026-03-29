@@ -22,6 +22,7 @@ const RInput = ({
     <Controller
       name={name}
       control={control}
+      defaultValue=""
       render={({ field, fieldState: { error } }) => (
         <div className="flex flex-col w-full">
           {label && (
@@ -37,6 +38,7 @@ const RInput = ({
             id={name}
             type={type}
             required={required}
+            value={field.value || ""}
             className={`
               px-3 py-2 border border-gray-300 rounded-md shadow-sm 
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
