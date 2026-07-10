@@ -74,6 +74,7 @@ const QuickActionCard = ({
 const DashboardPage = () => {
   const { data: projectsData } = useGetAllProjectsQuery({});
   const { data: blogsData } = useGetAllBlogsQuery({});
+  // console.log( 'projects',projectsData.length)
 
   return (
     <div className="space-y-8">
@@ -98,7 +99,7 @@ const DashboardPage = () => {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             title="Total Projects"
-            value={projectsData?.meta?.total}
+            value={projectsData?.length}
             icon={<Briefcase className="w-5 h-5 text-teal-400" />}
             accent="bg-teal-500"
             href="/projects"
@@ -106,7 +107,7 @@ const DashboardPage = () => {
           />
           <StatCard
             title="Total Blog Posts"
-            value={blogsData?.meta?.total}
+            value={blogsData?.length}
             icon={<Newspaper className="w-5 h-5 text-violet-400" />}
             accent="bg-violet-500"
             href="/blogs"
