@@ -83,7 +83,7 @@ const DashboardPage = () => {
           Dashboard Overview
         </h1>
         <p className="text-slate-500 text-sm mt-1">
-          Welcome back — here's what's happening with your portfolio.
+          Welcome back — heres whats happening with your portfolio.
         </p>
       </div>
 

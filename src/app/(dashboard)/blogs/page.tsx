@@ -87,7 +87,7 @@ const BlogsPage = () => {
             Blogs
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            {blogs.length} post{blogs.length !== 1 ? "s" : ""} · {blogs.filter((b) => b.status === "PUBLISHED").length} published
+            {blogs.length} post{blogs.length !== 1 ? "s" : ""} · {blogs.filter((b: TBlog) => b.status === "PUBLISHED").length} published
           </p>
         </div>
         <button
@@ -109,7 +109,7 @@ const BlogsPage = () => {
               <Newspaper className="w-6 h-6 text-violet-400" />
             </div>
             <p className="text-slate-300 font-medium">No blog posts yet</p>
-            <p className="text-slate-500 text-sm mt-1">Click "New Post" to write your first article.</p>
+            <p className="text-slate-500 text-sm mt-1">Click New Post to write your first article.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -146,7 +146,7 @@ const BlogsPage = () => {
                     <td className="px-5 py-3.5 text-slate-500 text-xs">{formatDate(blog.createdAt)}</td>
                     <td className="px-5 py-3.5">
                       <div className="flex justify-center gap-2">
-                        <button onClick={() => handleOpenEdit(blog) && refetch()}
+                        <button onClick={() => { handleOpenEdit(blog); refetch(); }}
                           className="p-1.5 rounded-lg text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" title="Edit">
                           <Edit size={15} />
                         </button>

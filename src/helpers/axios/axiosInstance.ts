@@ -2,6 +2,8 @@ import { authKey } from "@/contains/authKey";
 import { IGenericErrorResponse, ResponseSuccessType } from "@/types/common";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import axios from "axios";
+import { removeUser } from "@/services/auth.services";
+import { logoutUser } from "@/services/actions/logoutUser";
 
 const instance = axios.create();
 instance.defaults.headers.post["Content-Type"] = "application/json";
@@ -38,7 +40,7 @@ instance.interceptors.response.use(
     };
     return responseObject;
   },
-  function (error) {
+  async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     const responseObject: IGenericErrorResponse = {
@@ -46,6 +48,19 @@ instance.interceptors.response.use(
       message: error?.response?.data?.message || "Something went wrong!!!",
       errorMessages: error?.response?.data?.message,
     };
+
+    if (error?.response?.status === 401 || error?.response?.status === 403) {
+      removeUser();
+      try {
+        await logoutUser();
+      } catch (err) {
+        console.error("Failed to delete session cookie:", err);
+      }
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+
     return Promise.reject(responseObject);
   }
 );

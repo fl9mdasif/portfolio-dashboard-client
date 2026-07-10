@@ -114,7 +114,7 @@ const ReviewsPage = () => {
               <Star className="w-6 h-6 text-rose-400" />
             </div>
             <p className="text-slate-300 font-medium">No reviews yet</p>
-            <p className="text-slate-500 text-sm mt-1">Click "Add Review" to add a testimonial.</p>
+            <p className="text-slate-500 text-sm mt-1">Click Add Review to add a testimonial.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

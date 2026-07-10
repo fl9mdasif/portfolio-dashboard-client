@@ -112,7 +112,7 @@ const SkillsPage = () => {
               <Code2 className="w-6 h-6 text-amber-400" />
             </div>
             <p className="text-slate-300 font-medium">No skills yet</p>
-            <p className="text-slate-500 text-sm mt-1">Click "Add Skill" to get started.</p>
+            <p className="text-slate-500 text-sm mt-1">Click Add Skill to get started.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

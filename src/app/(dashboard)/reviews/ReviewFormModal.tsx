@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -109,7 +108,7 @@ const ReviewFormModal = ({ isOpen, onClose, onSave, review, isLoading }: ReviewF
           <div>
             <label className={labelCls}>
               Rating —{" "}
-              <span className="text-amber-400 normal-case flex items-center gap-0.5 inline-flex">
+              <span className="text-amber-400 normal-case flex items-center gap-0.5 ">
                 {Array.from({ length: formData.rating }).map((_, i) => (
                   <Star key={i} size={12} className="fill-amber-400" />
                 ))}

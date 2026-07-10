@@ -110,7 +110,7 @@ const ProjectsPage = () => {
               <Briefcase className="w-6 h-6 text-teal-400" />
             </div>
             <p className="text-slate-300 font-medium">No projects yet</p>
-            <p className="text-slate-500 text-sm mt-1">Click "Add Project" to get started.</p>
+            <p className="text-slate-500 text-sm mt-1">Click Add Project to get started.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
