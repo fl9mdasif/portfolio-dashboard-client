@@ -1,0 +1,21 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --cache .npm --prefer-offline
+    build:
+      commands:
+        # Amplify injects environment variables into the build container, but the
+        # Next.js SSR/API runtime does not inherit them. Writing the server-side
+        # ones into .env.production makes them readable at runtime.
+        - env | grep -e '^CLOUDINARY_' >> .env.production || true
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .next/cache/**/*
+      - .npm/**/*
