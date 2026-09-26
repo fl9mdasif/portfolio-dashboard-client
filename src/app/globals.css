@@ -176,3 +176,117 @@ button:hover {
     @apply font-sans;
   }
 }
+/* ── Tiptap rich text editor ───────────────────────────────── */
+.tiptap-content {
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.tiptap-content > * + * {
+  margin-top: 0.65em;
+}
+
+.tiptap-content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.3;
+}
+
+.tiptap-content h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.35;
+}
+
+.tiptap-content h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.tiptap-content strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+.tiptap-content ul,
+.tiptap-content ol {
+  padding-left: 1.4rem;
+}
+
+.tiptap-content ul {
+  list-style: disc;
+}
+
+.tiptap-content ol {
+  list-style: decimal;
+}
+
+.tiptap-content li p {
+  margin: 0;
+}
+
+.tiptap-content blockquote {
+  border-left: 3px solid rgba(255, 255, 255, 0.15);
+  padding-left: 0.9rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.tiptap-content code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+  color: #fbbf24;
+}
+
+.tiptap-content pre {
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  overflow-x: auto;
+}
+
+.tiptap-content pre code {
+  background: none;
+  padding: 0;
+  color: #cbd5e1;
+}
+
+.tiptap-content a {
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.tiptap-content hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1.1em 0;
+}
+
+.tiptap-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+/* Placeholder shown on the first empty node */
+.tiptap-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #475569;
+}
+
+.tiptap-content .ProseMirror-selectednode {
+  outline: 2px solid rgba(139, 92, 246, 0.6);
+  border-radius: 0.5rem;
+}

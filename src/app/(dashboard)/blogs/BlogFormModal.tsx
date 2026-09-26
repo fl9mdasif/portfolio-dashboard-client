@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { X, Loader2 } from "lucide-react";
 import { ImageUploader } from "@/services/ImageUploader";
 import { TBlog } from "@/types";
+import RichTextEditor, { isEmptyHtml } from "@/app/components/UI/RichTextEditor";
 
 interface BlogFormModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const labelCls = "block text-xs font-medium text-slate-400 uppercase tracking-wi
 
 const BlogFormModal = ({ isOpen, onClose, onSave, blog, isLoading }: BlogFormModalProps) => {
   const [formData, setFormData] = useState({ title: "", description: "", coverImage: "", status: "DRAFT" });
+  const [contentError, setContentError] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -29,11 +31,16 @@ const BlogFormModal = ({ isOpen, onClose, onSave, blog, isLoading }: BlogFormMod
       } else {
         setFormData({ title: "", description: "", coverImage: "", status: "DRAFT" });
       }
+      setContentError(false);
     }
   }, [blog, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isEmptyHtml(formData.description)) {
+      setContentError(true);
+      return;
+    }
     onSave(formData as any);
   };
 
@@ -86,15 +93,20 @@ const BlogFormModal = ({ isOpen, onClose, onSave, blog, isLoading }: BlogFormMod
           {/* Content */}
           <div>
             <label className={labelCls}>Content / Description</label>
-            <textarea
+            <RichTextEditor
+              accent="violet"
               placeholder="Write your blog content here..."
               value={formData.description}
-              onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
-              required
               disabled={isLoading}
-              rows={6}
-              className={inputCls + " resize-none"}
+              minHeight={260}
+              onChange={(html) => {
+                setFormData((p) => ({ ...p, description: html }));
+                if (contentError) setContentError(false);
+              }}
             />
+            {contentError && (
+              <p className="text-red-500 text-xs mt-1">Content is required.</p>
+            )}
           </div>
 
           {/* Status */}

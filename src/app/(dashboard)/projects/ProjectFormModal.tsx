@@ -4,6 +4,7 @@ import { TProject } from "@/types"; // Import TProjectStatus too
 import { useEffect, useState } from "react";
 import { X, Loader2 } from "lucide-react"; // Import Loader2 // Adjust path if needed
 import { ImageUploader } from "@/services/ImageUploader";
+import RichTextEditor, { isEmptyHtml } from "@/app/components/UI/RichTextEditor";
 
 interface ProjectFormModalProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ const ProjectFormModal = ({
   project,
   isLoading, // **[NEW]** Destructure isLoading
 }: ProjectFormModalProps) => {
+  const [descriptionError, setDescriptionError] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -92,6 +94,7 @@ const ProjectFormModal = ({
         });
       }
     }
+    setDescriptionError(false);
   }, [project, isOpen]);
 
   const handleInputChange = (
@@ -110,6 +113,10 @@ const ProjectFormModal = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return; // Prevent submission if already loading
+    if (isEmptyHtml(formData.description)) {
+      setDescriptionError(true);
+      return;
+    }
 
     const projectData: TProject = {
       title: formData.title,
@@ -180,7 +187,23 @@ const ProjectFormModal = ({
             <Input name="title" placeholder="Project Title" value={formData.title} onChange={handleInputChange} required disabled={isLoading} />
             <Input name="technologies" placeholder="Technologies (comma-separated: Next.js, TypeScript)" value={formData.technologies} onChange={handleInputChange} required disabled={isLoading} />
           </div>
-          <Textarea name="description" placeholder="Project Description" value={formData.description} onChange={handleInputChange} required disabled={isLoading} />
+          <div>
+            <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+            <RichTextEditor
+              accent="teal"
+              placeholder="Describe the project, its features and your role..."
+              value={formData.description}
+              disabled={isLoading}
+              minHeight={200}
+              onChange={(html) => {
+                setFormData((prev) => ({ ...prev, description: html }));
+                if (descriptionError) setDescriptionError(false);
+              }}
+            />
+            {descriptionError && (
+              <p className="text-red-500 text-xs mt-1">Description is required.</p>
+            )}
+          </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1.5">Category</label>

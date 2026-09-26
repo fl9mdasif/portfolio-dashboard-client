@@ -25,8 +25,9 @@ const ProjectsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<TProject | null>(null);
 
-  const { data: projects, refetch, isLoading } = useGetAllProjectsQuery({});
-  // const projects: TProject[] = projectsData?.data ?? [];
+  const { data, refetch, isLoading, isError, error } = useGetAllProjectsQuery({});
+  // The API may fail or return nothing, so never assume an array is present.
+  const projects: TProject[] = Array.isArray(data) ? data : (data?.data ?? []);
 
   const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
   const [updateProject, { isLoading: isUpdating }] = useUpdateProjectMutation();
@@ -72,6 +73,24 @@ const ProjectsPage = () => {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2 className="w-10 h-10 animate-spin text-teal-500" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] gap-3 text-center">
+        <Briefcase className="w-8 h-8 text-slate-600" />
+        <p className="text-slate-300 font-medium">Could not load projects</p>
+        <p className="text-slate-500 text-sm max-w-md">
+          {(error as any)?.data?.message ?? "The server did not respond. Check your connection and try again."}
+        </p>
+        <button
+          onClick={() => refetch()}
+          className="mt-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-teal-600 hover:bg-teal-500 transition-colors"
+        >
+          Retry
+        </button>
       </div>
     );
   }

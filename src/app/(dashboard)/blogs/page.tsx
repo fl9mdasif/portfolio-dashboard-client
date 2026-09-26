@@ -24,8 +24,9 @@ const BlogsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<TBlog | null>(null);
 
-  const { data: blogs, refetch, isLoading } = useGetAllBlogsQuery({});
-  // const blogs: TBlog[] = blogData?.data ?? [];
+  const { data, refetch, isLoading, isError, error } = useGetAllBlogsQuery({});
+  // The API may fail or return nothing, so never assume an array is present.
+  const blogs: TBlog[] = Array.isArray(data) ? data : (data?.data ?? []);
 
   const [createBlog, { isLoading: isCreating }] = useCreateBlogMutation();
   const [updateBlog, { isLoading: isUpdating }] = useUpdateBlogMutation();
@@ -71,6 +72,24 @@ const BlogsPage = () => {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2 className="w-10 h-10 animate-spin text-violet-500" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] gap-3 text-center">
+        <Newspaper className="w-8 h-8 text-slate-600" />
+        <p className="text-slate-300 font-medium">Could not load blog posts</p>
+        <p className="text-slate-500 text-sm max-w-md">
+          {(error as any)?.data?.message ?? "The server did not respond. Check your connection and try again."}
+        </p>
+        <button
+          onClick={() => refetch()}
+          className="mt-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-violet-600 hover:bg-violet-500 transition-colors"
+        >
+          Retry
+        </button>
       </div>
     );
   }

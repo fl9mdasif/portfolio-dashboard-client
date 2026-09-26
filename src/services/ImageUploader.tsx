@@ -75,6 +75,18 @@ async function compressImage(file: File, maxBytes: number): Promise<Blob> {
   });
 }
 
+interface CloudinaryUploadConfig {
+  mode: "signed" | "unsigned";
+  cloudName: string;
+  folder: string;
+  /** unsigned mode only */
+  preset?: string;
+  /** signed mode only */
+  apiKey?: string;
+  timestamp?: number;
+  signature?: string;
+}
+
 export const ImageUploader = ({
   onUploadSuccess,
   initialImageUrl,
@@ -96,37 +108,48 @@ export const ImageUploader = ({
       const finalKb = Math.round(compressed.size / 1024);
       setCompressedKb(finalKb);
 
+      // --- Ask our server how to upload (api secret stays server-side) ---
+      const { data: cfg } = await axios.post<CloudinaryUploadConfig>(
+        "/api/cloudinary-sign",
+      );
+
       // --- Build FormData ---
-      const formData = new FormData();
-      // Convert blob back to a named File so imgBB gets a proper filename
       const compressedFile = new File(
         [compressed],
         `portfolio-${Date.now()}.jpg`,
         { type: "image/jpeg" },
       );
-      formData.append("image", compressedFile);
-      formData.append("name", compressedFile.name);
+      const formData = new FormData();
+      formData.append("file", compressedFile);
+      formData.append("folder", cfg.folder);
 
-      // --- Upload to imgBB ---
-      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (cfg.mode === "unsigned") {
+        formData.append("upload_preset", cfg.preset as string);
+      } else {
+        formData.append("api_key", cfg.apiKey as string);
+        formData.append("timestamp", String(cfg.timestamp));
+        formData.append("signature", cfg.signature as string);
+      }
+
+      // --- Upload straight to Cloudinary ---
       const response = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${apiKey}`,
+        `https://api.cloudinary.com/v1_1/${cfg.cloudName}/image/upload`,
         formData,
       );
 
-      if (response.data.success) {
-        const imageUrl = response.data.data.display_url;
-        setPreview(imageUrl);
-        onUploadSuccess(imageUrl);
-        toast.success(`Uploaded · ${finalKb} KB`);
-      } else {
-        throw new Error("Upload failed");
-      }
+      const imageUrl: string | undefined =
+        response.data?.secure_url || response.data?.url;
+      if (!imageUrl) throw new Error("Cloudinary did not return an image URL");
+
+      setPreview(imageUrl);
+      onUploadSuccess(imageUrl);
+      toast.success(`Uploaded · ${finalKb} KB`);
     } catch (error: unknown) {
       console.error("Upload error:", error);
-      toast.error(
-        (error as { response?: { data?: { error?: { message?: string } } } }).response?.data?.error?.message || "Failed to upload image.",
-      );
+      const res = (error as {
+        response?: { data?: { error?: { message?: string }; message?: string } };
+      }).response?.data;
+      toast.error(res?.error?.message || res?.message || "Failed to upload image.");
     } finally {
       setIsUploading(false);
     }
